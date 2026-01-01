@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wallhub | 6.4M+ HD Wallpapers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff4b8d;
+            --success: #00c851;
+            --danger: #ff4444;
+            --warning: #ffbb33;
+            --dark: #0a0a0a;
+            --light: #ffffff;
+            --card-bg: #1a1a1a;
+            --input-bg: #2a2a2a;
+            --text-light: #b0b0b0;
+            --border: #333333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* Mobile Header */
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+
+        .logo-icon {
+            color: var(--accent);
+            font-size: 1.6rem;
+        }
+
+        .logo-text {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 60px;
+            padding: 0 10px;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 3px;
+            animation: countUp 2s ease-out;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .hero-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .hero-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* Category Filters */
+        .category-filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 0 15px;
+            margin: 0 10px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .category-filters::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            color: white;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-color: transparent;
+        }
+
+        /* Wallpapers Grid */
+        .wallpapers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .wallpaper-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .wallpaper-card:active {
+            transform: scale(0.98);
+        }
+
+        .wallpaper-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .wallpaper-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 15px;
+            color: white;
+        }
+
+        .wallpaper-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .wallpaper-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Floating Action Buttons */
+        .fab-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+            box-shadow: 0 3px 10px rgba(106, 17, 203, 0.6);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .modal-content {
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .download-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .set-btn {
+            background: linear-gradient(90deg, var(--accent), #ff6b9d);
+            color: white;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            max-width: 400px;
+            margin: 100px auto 0;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-light);
+        }
+
+        .switch-btn {
+            color: var(--accent);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--dark);
+            z-index: 3000;
+            overflow-y: auto;
+            padding: 20px;
+            display: none;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .admin-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .admin-tab {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            color: white;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .admin-tab.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-color: transparent;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .admin-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .admin-card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .admin-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .approve-btn {
+            background: rgba(0, 200, 81, 0.2);
+            color: var(--success);
+        }
+
+        .reject-btn {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .delete-btn {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .feature-btn {
+            background: rgba(255, 107, 157, 0.2);
+            color: var(--accent);
+        }
+
+        .improve-btn {
+            background: rgba(106, 17, 203, 0.2);
+            color: var(--primary);
+        }
+
+        .dimension-badge {
+            background: rgba(255, 187, 51, 0.2);
+            color: var(--warning);
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            padding: 20px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .upload-preview {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .upload-form {
+            display: none;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-input {
+            flex: 1;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 4000;
+            display: none;
+            animation: slideDown 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stats Dashboard */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Upload Guidelines */
+        .guidelines {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .guidelines h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .guidelines ul {
+            padding-left: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .guidelines li {
+            margin-bottom: 5px;
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 768px) {
+            .wallpapers-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+            
+            .wallpaper-image {
+                height: 320px;
+            }
+
+            .stats-dashboard {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="logo">
+            <i class="fas fa-mountain-sun logo-icon"></i>
+            <span class="logo-text">Wallhub</span>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="icon-btn" id="loginBtn">
+                <i class="fas fa-user"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number" data-count="6400000">0</span>
+                <span class="stat-label">Wallpapers</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-count="3700000">0</span>
+                <span class="stat-label">Downloads</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" data-count="500000">0</span>
+                <span class="stat-label">Users</span>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">6.4M+ HD Mobile Wallpapers</h1>
+            <p class="hero-subtitle">Download high-quality 1080x1876 wallpapers or upload your own creations!</p>
+        </section>
+
+        <!-- Category Filters -->
+        <div class="category-filters">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="nature">Nature</button>
+            <button class="filter-btn" data-category="abstract">Abstract</button>
+            <button class="filter-btn" data-category="cars">Cars</button>
+            <button class="filter-btn" data-category="animals">Animals</button>
+            <button class="filter-btn" data-category="technology">Tech</button>
+            <button class="filter-btn" data-category="space">Space</button>
+            <button class="filter-btn" data-category="minimal">Minimal</button>
+        </div>
+
+        <!-- Wallpapers Grid -->
+        <div class="wallpapers-grid" id="wallpapersGrid">
+            <!-- Wallpapers will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <div class="fab-container">
+        <button class="fab" id="uploadFab">
+            <i class="fas fa-cloud-upload-alt"></i>
+        </button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" id="homeNav">
+            <i class="fas fa-home nav-icon"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" id="exploreNav">
+            <i class="fas fa-compass nav-icon"></i>
+            <span>Explore</span>
+        </div>
+        <div class="nav-item" id="uploadNav">
+            <i class="fas fa-upload nav-icon"></i>
+            <span>Upload</span>
+        </div>
+        <div class="nav-item" id="profileNav">
+            <i class="fas fa-user nav-icon"></i>
+            <span>Profile</span>
+        </div>
+    </nav>
+
+    <!-- Login/Register Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content login-modal">
+            <div class="modal-header">
+                <h2 id="loginTitle">Login</h2>
+                <button class="modal-close" id="loginClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••">
+                </div>
+                
+                <button class="login-btn" id="loginSubmit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="switch-form">
+                    Don't have an account? 
+                    <button class="switch-btn" id="switchToRegister">Register</button>
+                </div>
+
+                <div class="switch-form" style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
+                    <button class="switch-btn" id="adminLoginBtn" style="color: var(--warning);">
+                        <i class="fas fa-user-shield"></i> Admin Login
+                    </button>
+                </div>
+            </div>
+
+            <div class="login-form" id="registerForm" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="registerName" placeholder="John Doe">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="registerEmail" placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="registerPassword" placeholder="••••••••">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-input" id="registerConfirm" placeholder="••••••••">
+                </div>
+                
+                <button class="login-btn" id="registerSubmit">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+                
+                <div class="switch-form">
+                    Already have an account? 
+                    <button class="switch-btn" id="switchToLogin">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wallpaper Modal -->
+    <div class="modal" id="wallpaperModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Wallpaper</h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <img id="modalImage" class="modal-image" src="" alt="Wallpaper">
+            
+            <div class="modal-actions">
+                <button class="action-btn download-btn" id="modalDownload">
+                    <i class="fas fa-download"></i>
+                    Download
+                </button>
+                <button class="action-btn set-btn" id="modalSet">
+                    <i class="fas fa-mobile-alt"></i>
+                    Set Wallpaper
+                </button>
+            </div>
+
+            <div class="guidelines" style="margin-top: 20px;">
+                <h4><i class="fas fa-info-circle"></i> Image Info</h4>
+                <p>Resolution: <strong id="modalResolution">1080x1876</strong></p>
+                <p>Size: <strong id="modalSize">1.2 MB</strong></p>
+                <p>Uploaded by: <strong id="modalAuthor">Admin</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Your Wallpaper</h2>
+                <button class="modal-close" id="uploadClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="upload-section">
+                <div class="guidelines">
+                    <h4><i class="fas fa-ruler-combined"></i> Upload Guidelines</h4>
+                    <ul>
+                        <li>Resolution must be exactly <strong>1080x1876</strong> pixels</li>
+                        <li>Maximum file size: 5MB</li>
+                        <li>Allowed formats: JPG, PNG, WEBP</li>
+                        <li>Your wallpaper will be reviewed by admin before publishing</li>
+                        <li>Only original content allowed (no copyright violations)</li>
+                    </ul>
+                </div>
+                
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Tap to select image</p>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">
+                        JPG, PNG, WEBP (Max 5MB) - Must be 1080x1876
+                    </p>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                </div>
+                
+                <img id="uploadPreview" class="upload-preview" alt="Preview">
+                
+                <form class="upload-form" id="uploadForm">
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="uploadTitle" 
+                               placeholder="Wallpaper title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select class="form-input" id="uploadCategory" required>
+                            <option value="">Select category</option>
+                            <option value="nature">Nature</option>
+                            <option value="abstract">Abstract</option>
+                            <option value="cars">Cars</option>
+                            <option value="animals">Animals</option>
+                            <option value="technology">Technology</option>
+                            <option value="space">Space</option>
+                            <option value="minimal">Minimal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="uploadTags" 
+                               placeholder="Tags (comma separated) e.g., sunset, mountain, landscape">
+                    </div>
+                    
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-upload"></i> Upload for Review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content login-modal">
+            <div class="modal-header">
+                <h2>Admin Login</h2>
+                <button class="modal-close" id="adminLoginClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="login-form">
+                <div class="form-group">
+                    <label class="form-label">Admin Password</label>
+                    <input type="password" class="form-input" id="adminPassword" 
+                           placeholder="Enter admin password">
+                </div>
+                
+                <div class="guidelines" style="margin-bottom: 20px;">
+                    <h4><i class="fas fa-shield-alt"></i> Admin Access</h4>
+                    <p>This panel is only for the website owner (Bilal). Enter the correct password to access admin features.</p>
+                    <p style="color: var(--accent); margin-top: 10px;">
+                        <i class="fas fa-key"></i> Default: <strong>Bilal546##</strong>
+                    </p>
+                </div>
+                
+                <button class="login-btn" id="adminLoginSubmit">
+                    <i class="fas fa-user-shield"></i> Login as Admin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h2 class="admin-title"><i class="fas fa-user-shield"></i> Admin Panel</h2>
+            <button class="admin-close" id="adminPanelClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="dashboard">Dashboard</button>
+            <button class="admin-tab" data-tab="pending">Pending Review</button>
+            <button class="admin-tab" data-tab="all">All Wallpapers</button>
+            <button class="admin-tab" data-tab="users">Users</button>
+            <button class="admin-tab" data-tab="upload">Upload New</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div class="admin-content active" id="dashboardTab">
+            <div class="stats-dashboard">
+                <div class="stat-card">
+                    <h3>6.4M</h3>
+                    <p>Total Wallpapers</p>
+                </div>
+                <div class="stat-card">
+                    <h3>3.7M</h3>
+                    <p>Total Downloads</p>
+                </div>
+                <div class="stat-card">
+                    <h3>500K</h3>
+                    <p>Total Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="pendingCount">0</h3>
+                    <p>Pending Reviews</p>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3 class="admin-card-title">Recent Activity</h3>
+                <p id="recentActivity">No recent activity</p>
+            </div>
+
+            <div class="admin-card">
+                <h3 class="admin-card-title">Quick Actions</h3>
+                <div class="admin-actions">
+                    <button class="admin-btn approve-btn" onclick="showTab('pending')">
+                        <i class="fas fa-check-circle"></i> Review Uploads
+                    </button>
+                    <button class="admin-btn feature-btn" onclick="showTab('upload')">
+                        <i class="fas fa-upload"></i> Upload New
+                    </button>
+                    <button class="admin-btn delete-btn" onclick="clearAllPending()">
+                        <i class="fas fa-trash"></i> Clear All Pending
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Review Tab -->
+        <div class="admin-content" id="pendingTab">
+            <h3 style="margin-bottom: 20px;">Pending Wallpaper Reviews</h3>
+            <div id="pendingList">
+                <!-- Pending items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- All Wallpapers Tab -->
+        <div class="admin-content" id="allTab">
+            <h3 style="margin-bottom: 20px;">All Wallpapers</h3>
+            <div id="allWallpapersList">
+                <!-- All wallpapers will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div class="admin-content" id="usersTab">
+            <h3 style="margin-bottom: 20px;">Registered Users</h3>
+            <div id="usersList">
+                <!-- Users will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Upload New Tab -->
+        <div class="admin-content" id="uploadTab">
+            <h3 style="margin-bottom: 20px;">Upload New Wallpaper (Admin)</h3>
+            
+            <div class="upload-area" id="adminUploadArea">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <p>Tap to select image</p>
+                <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 5px;">
+                    Must be 1080x1876 resolution
+                </p>
+                <input type="file" id="adminFileInput" accept="image/*" style="display: none;">
+            </div>
+            
+            <img id="adminUploadPreview" class="upload-preview" alt="Preview">
+            
+            <form id="adminUploadForm" style="margin-top: 20px;">
+                <div class="form-row">
+                    <input type="text" class="form-input" id="adminTitle" 
+                           placeholder="Title" required>
+                    <select class="form-input" id="adminCategory" required>
+                        <option value="nature">Nature</option>
+                        <option value="abstract">Abstract</option>
+                        <option value="cars">Cars</option>
+                        <option value="animals">Animals</option>
+                        <option value="technology">Technology</option>
+                        <option value="space">Space</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" class="form-input" id="adminTags" 
+                           placeholder="Tags (comma separated)">
+                </div>
+                
+                <div class="form-group">
+                    <label style="color: var(--text-light); font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="featuredCheckbox">
+                        Mark as Featured
+                    </label>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-check-circle"></i> Publish Immediately
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // ========== CONFIGURATION ==========
+        const ADMIN_PASSWORD = "Bilal546##";
+        const ADMIN_EMAIL = "badsha.bilal.546@gmail.com";
+        const ADMIN_PHONE = "0789380279";
+
+        // ========== DATA STORAGE ==========
+        let wallpapers = [];
+        let pendingUploads = [];
+        let users = [];
+        let currentUser = null;
+        let isAdminLoggedIn = false;
+        let currentWallpaper = null;
+        let currentFilter = 'all';
+
+        // ========== DOM ELEMENTS ==========
+        const elements = {
+            wallpapersGrid: document.getElementById('wallpapersGrid'),
+            statsNumbers: document.querySelectorAll('.stat-number'),
+            loginModal: document.getElementById('loginModal'),
+            adminPanel: document.getElementById('adminPanel'),
+            wallpaperModal: document.getElementById('wallpaperModal'),
+            uploadModal: document.getElementById('uploadModal'),
+            adminLoginModal: document.getElementById('adminLoginModal'),
+            notification: document.getElementById('notification')
+        };
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            setupEventListeners();
+            animateStats();
+            loadWallpapers();
+            
+            // Check for saved session
+            const savedUser = localStorage.getItem('currentUser');
+            const savedAdmin = localStorage.getItem('isAdminLoggedIn');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateUserUI();
+            }
+            
+            if (savedAdmin === 'true') {
+                isAdminLoggedIn = true;
+            }
+        });
+
+        // ========== DATA INITIALIZATION ==========
+        function initializeData() {
+            // Load 60 real wallpapers (1080x1876 resolution)
+            wallpapers = [
+                // Nature (12 wallpapers)
+                { id: 1, title: "Mountain Sunset", category: "nature", views: 12450, downloads: 8500, featured: true, url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 2, title: "Ocean Waves", category: "nature", views: 9870, downloads: 6540, featured: false, url: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+                { id: 3, title: "Forest Path", category: "nature", views: 7650, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 4, title: "Northern Lights", category: "nature", views: 15680, downloads: 10980, featured: true, url: "https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 5, title: "Desert Dunes", category: "nature", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+                { id: 6, title: "Waterfall", category: "nature", views: 11230, downloads: 7650, featured: false, url: "https://images.unsplash.com/photo-1512273222628-4daea6e55abb?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 7, title: "Autumn Forest", category: "nature", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 8, title: "Mountain Lake", category: "nature", views: 9430, downloads: 6210, featured: false, url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+                { id: 9, title: "Beach Sunset", category: "nature", views: 13210, downloads: 9870, featured: true, url: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 10, title: "Snow Mountains", category: "nature", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1464278533981-50106e6176b1?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 11, title: "Flower Field", category: "nature", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+                { id: 12, title: "Water Reflection", category: "nature", views: 7650, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+
+                // Abstract (10 wallpapers)
+                { id: 13, title: "Colorful Waves", category: "abstract", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1550684376-efcbd6e3f031?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 14, title: "Geometric Pattern", category: "abstract", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+                { id: 15, title: "Liquid Art", category: "abstract", views: 9870, downloads: 6540, featured: true, url: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 16, title: "Abstract Gradient", category: "abstract", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1579546929662-711aa81148cf?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "0.9MB" },
+                { id: 17, title: "Digital Art", category: "abstract", views: 7650, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+                { id: 18, title: "Color Splash", category: "abstract", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 19, title: "Abstract Lines", category: "abstract", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1550684842-3fec2d8d7a2b?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "0.8MB" },
+                { id: 20, title: "Pattern Design", category: "abstract", views: 4320, downloads: 2100, featured: false, url: "https://images.unsplash.com/photo-1550684841-4c6c6e6b6c6b?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+                { id: 21, title: "Color Burst", category: "abstract", views: 7650, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1080&h=1876&fit=crop&crop=center&sat=50", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 22, title: "Modern Art", category: "abstract", views: 8760, downloads: 5430, featured: true, url: "https://images.unsplash.com/photo-1543857778-c4a1a569e388?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+
+                // Cars (8 wallpapers)
+                { id: 23, title: "Sports Car Red", category: "cars", views: 21030, downloads: 15670, featured: true, url: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 24, title: "Luxury Car", category: "cars", views: 16540, downloads: 10980, featured: false, url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 25, title: "Classic Car", category: "cars", views: 9870, downloads: 6540, featured: false, url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.5MB" },
+                { id: 26, title: "Super Car", category: "cars", views: 14320, downloads: 9870, featured: true, url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 27, title: "Car Interior", category: "cars", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1080&h=1876&fit=crop&crop=focalpoint&fp-x=0.3&fp-y=0.5", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+                { id: 28, title: "Car Headlight", category: "cars", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+                { id: 29, title: "Racing Car", category: "cars", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1514316454349-750a7fd3da3a?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 30, title: "Car Dashboard", category: "cars", views: 4320, downloads: 2100, featured: false, url: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1080&h=1876&fit=crop&crop=focalpoint&fp-x=0.7&fp-y=0.5", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+
+                // Animals (8 wallpapers)
+                { id: 31, title: "Lion King", category: "animals", views: 15320, downloads: 10980, featured: true, url: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 32, title: "Wolf Howling", category: "animals", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1518710843675-2540dd79065c?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 33, title: "Eagle Flying", category: "animals", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1551085254-e96b210db58a?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 34, title: "Tiger", category: "animals", views: 9870, downloads: 6540, featured: false, url: "https://images.unsplash.com/photo-1562552476-8ac4a2d1d6a0?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.5MB" },
+                { id: 35, title: "Elephant", category: "animals", views: 7650, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 36, title: "Panda", category: "animals", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+                { id: 37, title: "Dolphin", category: "animals", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 38, title: "Butterfly", category: "animals", views: 4320, downloads: 2100, featured: true, url: "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bbcc?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+
+                // Technology (8 wallpapers)
+                { id: 39, title: "Circuit Board", category: "technology", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 40, title: "Neon Lights", category: "technology", views: 9870, downloads: 6540, featured: true, url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 41, title: "Data Center", category: "technology", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1518495978942-83cdb633d6d6?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.1MB" },
+                { id: 42, title: "AI Network", category: "technology", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 43, title: "Digital World", category: "technology", views: 4320, downloads: 2100, featured: false, url: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1080&h=1876&fit=crop&crop=center&brightness=20", author: "admin", resolution: "1080x1876", size: "1.0MB" },
+                { id: 44, title: "Tech Pattern", category: "technology", views: 7650, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1518432031355-d259f1e6c8a5?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 45, title: "Robot Eye", category: "technology", views: 8760, downloads: 5430, featured: true, url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1080&h=1876&fit=crop&crop=focalpoint&fp-x=0.3&fp-y=0.5", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 46, title: "Cyber City", category: "technology", views: 9870, downloads: 6540, featured: false, url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.5MB" },
+
+                // Space (7 wallpapers)
+                { id: 47, title: "Milky Way", category: "space", views: 34210, downloads: 27890, featured: true, url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.6MB" },
+                { id: 48, title: "Moon Surface", category: "space", views: 16540, downloads: 10980, featured: false, url: "https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 49, title: "Planet Earth", category: "space", views: 8760, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+                { id: 50, title: "Nebula", category: "space", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.5MB" },
+                { id: 51, title: "Solar System", category: "space", views: 5430, downloads: 3210, featured: false, url: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1080&h=1876&fit=crop&crop=center&brightness=30", author: "admin", resolution: "1080x1876", size: "1.2MB" },
+                { id: 52, title: "Stars Galaxy", category: "space", views: 4320, downloads: 2100, featured: true, url: "https://images.unsplash.com/photo-1465101162946-4377e57745c3?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "1.4MB" },
+                { id: 53, title: "Space Station", category: "space", views: 7650, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=1080&h=1876&fit=crop&crop=focalpoint&fp-x=0.7&fp-y=0.5", author: "admin", resolution: "1080x1876", size: "1.3MB" },
+
+                // Minimal (7 wallpapers)
+                { id: 54, title: "Minimal Lines", category: "minimal", views: 7650, downloads: 5430, featured: false, url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1080&h=1876&fit=crop&crop=center", author: "admin", resolution: "1080x1876", size: "0.8MB" },
+                { id: 55, title: "Simple Pattern", category: "minimal", views: 6540, downloads: 4320, featured: false, url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1080&h=1876&fit=crop&crop=center&sat=-50", author: "admin", resolution: "1080x1876", size: "0.7MB" },
+                { id: 56, title: "Clean Design", category: "minimal", views: 5430, downloads: 3210, featured: true, url: "https://images.unsplash.com/photo-1579546929662-711aa81148cf?w=1080&h=1876&fit=crop&crop=center&sat=-30", author: "admin", resolution: "1080x1876", size: "0.6MB" },
+                { id: 57, title: "White Space", category: "minimal", views: 4320, downloads: 2100, featured: false, url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1080&h=1876&fit=crop&crop=center&brightness=50", author: "admin", resolution: "1080x1876", size: "0.5MB" },
+                { id: 58, title: "Geometric Simple", category: "minimal", views: 3210, downloads: 1500, featured: false, url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=1080&h=1876&fit=crop&crop=center&sat=-70", author: "admin", resolution: "1080x1876", size: "0.6MB" },
+                { id: 59, title: "Minimal Dot", category: "minimal", views: 2100, downloads: 1200, featured: false, url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1080&h=1876&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.3", author: "admin", resolution: "1080x1876", size: "0.4MB" },
+                { id: 60, title: "Clean Lines", category: "minimal", views: 1500, downloads: 800, featured: true, url: "https://images.unsplash.com/photo-1579546929662-711aa81148cf?w=1080&h=1876&fit=crop&crop=center&sat=-90", author: "admin", resolution: "1080x1876", size: "0.5MB" }
+            ];
+
+            // Load pending uploads from localStorage
+            const savedPending = localStorage.getItem('pendingUploads');
+            if (savedPending) {
+                pendingUploads = JSON.parse(savedPending);
+            }
+
+            // Load users from localStorage
+            const savedUsers = localStorage.getItem('users');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            } else {
+                // Add default admin user
+                users = [
+                    {
+                        id: 1,
+                        name: "Bilal Admin",
+                        email: ADMIN_EMAIL,
+                        password: "Bilal546##",
+                        isAdmin: true,
+                        joined: new Date().toISOString(),
+                        uploads: wallpapers.length
+                    }
+                ];
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            updatePendingCount();
+        }
+
+        // ========== EVENT LISTENERS ==========
+        function setupEventListeners() {
+            // Category filters
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.category;
+                    loadWallpapers();
+                });
+            });
+
+            // Login button
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                elements.loginModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Upload FAB
+            document.getElementById('uploadFab').addEventListener('click', () => {
+                if (!currentUser) {
+                    showNotification("Please login to upload wallpapers!", "error");
+                    elements.loginModal.style.display = 'block';
+                    return;
+                }
+                elements.uploadModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Upload navigation
+            document.getElementById('uploadNav').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!currentUser) {
+                    showNotification("Please login to upload wallpapers!", "error");
+                    elements.loginModal.style.display = 'block';
+                    return;
+                }
+                elements.uploadModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Close buttons
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+            });
+
+            // File upload
+            document.getElementById('uploadArea').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+
+            document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+
+            // Upload form submission
+            document.getElementById('uploadForm').addEventListener('submit', handleUserUpload);
+
+            // Login/Register forms
+            document.getElementById('switchToRegister').addEventListener('click', () => {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('loginTitle').textContent = 'Register';
+            });
+
+            document.getElementById('switchToLogin').addEventListener('click', () => {
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('loginTitle').textContent = 'Login';
+            });
+
+            // Login submission
+            document.getElementById('loginSubmit').addEventListener('click', handleLogin);
+            document.getElementById('registerSubmit').addEventListener('click', handleRegister);
+
+            // Admin login button
+            document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                elements.loginModal.style.display = 'none';
+                elements.adminLoginModal.style.display = 'block';
+            });
+
+            // Admin login submission
+            document.getElementById('adminLoginSubmit').addEventListener('click', handleAdminLogin);
+
+            // Admin tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    showTab(this.dataset.tab);
+                });
+            });
+
+            // Admin panel close
+            document.getElementById('adminPanelClose').addEventListener('click', () => {
+                elements.adminPanel.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+
+            // Modal outside click
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+
+            // Bottom navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const id = this.id;
+                    if (id === 'profileNav') {
+                        if (!currentUser) {
+                            showNotification("Please login first!", "error");
+                            elements.loginModal.style.display = 'block';
+                            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                            document.getElementById('homeNav').classList.add('active');
+                        }
+                    }
+                });
+            });
+        }
+
+        // ========== WALLPAPER FUNCTIONS ==========
+        function loadWallpapers() {
+            const grid = elements.wallpapersGrid;
+            grid.innerHTML = '';
+            
+            let filtered = wallpapers;
+            if (currentFilter !== 'all') {
+                filtered = wallpapers.filter(w => w.category === currentFilter);
+            }
+            
+            filtered.forEach(wallpaper => {
+                const card = document.createElement('div');
+                card.className = 'wallpaper-card';
+                card.dataset.id = wallpaper.id;
+                
+                card.innerHTML = `
+                    <img src="${wallpaper.url}" alt="${wallpaper.title}" class="wallpaper-image" loading="lazy">
+                    <div class="wallpaper-overlay">
+                        <div class="wallpaper-title">${wallpaper.title}</div>
+                        <div class="wallpaper-stats">
+                            <span><i class="fas fa-eye"></i> ${wallpaper.views.toLocaleString()}</span>
+                            <span><i class="fas fa-download"></i> ${wallpaper.downloads.toLocaleString()}</span>
+                            ${wallpaper.featured ? '<span><i class="fas fa-star"></i> Featured</span>' : ''}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => openWallpaperModal(wallpaper));
+                grid.appendChild(card);
+            });
+        }
+
+        function openWallpaperModal(wallpaper) {
+            currentWallpaper = wallpaper;
+            
+            document.getElementById('modalImage').src = wallpaper.url;
+            document.getElementById('modalTitle').textContent = wallpaper.title;
+            document.getElementById('modalResolution').textContent = wallpaper.resolution;
+            document.getElementById('modalSize').textContent = wallpaper.size;
+            document.getElementById('modalAuthor').textContent = wallpaper.author === 'admin' ? 'Admin' : 'User';
+            
+            elements.wallpaperModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Increment views
+            wallpaper.views++;
+            updateWallpaperInGrid(wallpaper.id);
+        }
+
+        function downloadWallpaper() {
+            if (!currentWallpaper) return;
+            
+            const link = document.createElement('a');
+            link.href = currentWallpaper.url;
+            link.download = `wallpaper_${currentWallpaper.id}.jpg`;
+            link.target = '_blank';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Increment downloads
+            currentWallpaper.downloads++;
+            updateWallpaperInGrid(currentWallpaper.id);
+            
+            showNotification(`Downloading "${currentWallpaper.title}"...`, "success");
+        }
+
+        function updateWallpaperInGrid(id) {
+            const card = document.querySelector(`.wallpaper-card[data-id="${id}"]`);
+            if (card) {
+                const wallpaper = wallpapers.find(w => w.id === id);
+                if (wallpaper) {
+                    const stats = card.querySelector('.wallpaper-stats');
+                    stats.innerHTML = `
+                        <span><i class="fas fa-eye"></i> ${wallpaper.views.toLocaleString()}</span>
+                        <span><i class="fas fa-download"></i> ${wallpaper.downloads.toLocaleString()}</span>
+                        ${wallpaper.featured ? '<span><i class="fas fa-star"></i> Featured</span>' : ''}
+                    `;
+                }
+            }
+        }
+
+        // ========== USER FUNCTIONS ==========
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                elements.loginModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                updateUserUI();
+                showNotification(`Welcome back, ${user.name}!`, "success");
+            } else {
+                showNotification("Invalid email or password!", "error");
+            }
+        }
+
+        function handleRegister() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirm = document.getElementById('registerConfirm').value;
+            
+            if (!name || !email || !password || !confirm) {
+                showNotification("Please fill all fields!", "error");
+                return;
+            }
+            
+            if (password !== confirm) {
+                showNotification("Passwords don't match!", "error");
+                return;
+            }
+            
+            if (users.some(u => u.email === email)) {
+                showNotification("Email already registered!", "error");
+                return;
+            }
+            
+            const newUser = {
+                id: users.length + 1,
+                name: name,
+                email: email,
+                password: password,
+                isAdmin: false,
+                joined: new Date().toISOString(),
+                uploads: 0
+            };
+            
+            users.push(newUser);
+            currentUser = newUser;
+            
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            
+            elements.loginModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            updateUserUI();
+            showNotification(`Welcome to Wallhub, ${name}!`, "success");
+        }
+
+        function updateUserUI() {
+            const loginBtn = document.getElementById('loginBtn');
+            if (currentUser) {
+                loginBtn.innerHTML = `<i class="fas fa-user-check"></i>`;
+                loginBtn.title = currentUser.name;
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            isAdminLoggedIn = false;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('isAdminLoggedIn');
+            
+            updateUserUI();
+            showNotification("Logged out successfully!", "info");
+        }
+
+        // ========== ADMIN FUNCTIONS ==========
+        function handleAdminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                
+                elements.adminLoginModal.style.display = 'none';
+                elements.adminPanel.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                showTab('dashboard');
+                showNotification("Admin panel unlocked! 🔐", "success");
+            } else {
+                showNotification("Invalid admin password!", "error");
+            }
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const tab = document.getElementById(tabName + 'Tab');
+            if (tab) {
+                tab.classList.add('active');
+                
+                switch(tabName) {
+                    case 'pending':
+                        loadPendingReviews();
+                        break;
+                    case 'all':
+                        loadAllWallpapers();
+                        break;
+                    case 'users':
+                        loadUsers();
+                        break;
+                    case 'dashboard':
+                        updateDashboard();
+                        break;
+                }
+            }
+        }
+
+        function loadPendingReviews() {
+            const container = document.getElementById('pendingList');
+            container.innerHTML = '';
+            
+            if (pendingUploads.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 40px;">No pending reviews</p>';
+                return;
+            }
+            
+            pendingUploads.forEach((upload, index) => {
+                const item = document.createElement('div');
+                item.className = 'admin-card';
+                item.innerHTML = `
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">${upload.title}</h3>
+                        <span style="color: var(--text-light); font-size: 0.9rem;">#${index + 1}</span>
+                    </div>
+                    <p>Category: <strong>${upload.category}</strong></p>
+                    <p>Uploaded by: ${upload.userName} (${upload.userEmail})</p>
+                    <p>Tags: ${upload.tags || 'No tags'}</p>
+                    <div class="dimension-badge">
+                        <i class="fas fa-ruler-combined"></i> ${upload.dimensions || '1080x1876'}
+                    </div>
+                    <div class="admin-actions" style="margin-top: 15px;">
+                        <button class="admin-btn approve-btn" onclick="approveUpload(${index})">
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                        <button class="admin-btn reject-btn" onclick="rejectUpload(${index})">
+                            <i class="fas fa-ban"></i> Reject
+                        </button>
+                        <button class="admin-btn improve-btn" onclick="improveUpload(${index})">
+                            <i class="fas fa-magic"></i> Improve
+                        </button>
+                        <button class="admin-btn delete-btn" onclick="deletePending(${index})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function approveUpload(index) {
+            const upload = pendingUploads[index];
+            
+            // Add to wallpapers
+            const newWallpaper = {
+                id: wallpapers.length + 1,
+                title: upload.title,
+                category: upload.category,
+                views: 0,
+                downloads: 0,
+                featured: false,
+                url: upload.imageUrl,
+                author: upload.userName,
+                resolution: "1080x1876",
+                size: "1.2MB"
+            };
+            
+            wallpapers.push(newWallpaper);
+            
+            // Remove from pending
+            pendingUploads.splice(index, 1);
+            localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+            
+            // Update user upload count
+            const user = users.find(u => u.email === upload.userEmail);
+            if (user) {
+                user.uploads = (user.uploads || 0) + 1;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+            
+            updatePendingCount();
+            loadPendingReviews();
+            loadWallpapers();
+            
+            showNotification(`Wallpaper "${upload.title}" approved and published!`, "success");
+        }
+
+        function improveUpload(index) {
+            const upload = pendingUploads[index];
+            
+            showNotification(`Improving "${upload.title}"...`, "info");
+            
+            // Simulate improvement process
+            setTimeout(() => {
+                upload.title = `[IMPROVED] ${upload.title}`;
+                upload.dimensions = "1080x1876 (Enhanced)";
+                
+                localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+                loadPendingReviews();
+                
+                showNotification(`Wallpaper improved! Ready for approval.`, "success");
+            }, 1500);
+        }
+
+        function rejectUpload(index) {
+            const upload = pendingUploads[index];
+            const reason = prompt("Reason for rejection:");
+            
+            if (reason) {
+                pendingUploads.splice(index, 1);
+                localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+                
+                updatePendingCount();
+                loadPendingReviews();
+                
+                showNotification(`Wallpaper rejected. Reason: ${reason}`, "warning");
+            }
+        }
+
+        function deletePending(index) {
+            if (confirm("Delete this upload permanently?")) {
+                pendingUploads.splice(index, 1);
+                localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+                
+                updatePendingCount();
+                loadPendingReviews();
+                
+                showNotification("Upload deleted permanently!", "info");
+            }
+        }
+
+        function clearAllPending() {
+            if (confirm("Delete ALL pending uploads? This cannot be undone!")) {
+                pendingUploads = [];
+                localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+                
+                updatePendingCount();
+                loadPendingReviews();
+                
+                showNotification("All pending uploads cleared!", "info");
+            }
+        }
+
+        function loadAllWallpapers() {
+            const container = document.getElementById('allWallpapersList');
+            container.innerHTML = '';
+            
+            wallpapers.forEach(wallpaper => {
+                const item = document.createElement('div');
+                item.className = 'admin-card';
+                item.innerHTML = `
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">${wallpaper.title}</h3>
+                        <span style="color: var(--text-light); font-size: 0.9rem;">ID: ${wallpaper.id}</span>
+                    </div>
+                    <p>Category: <strong>${wallpaper.category}</strong> | Views: ${wallpaper.views} | Downloads: ${wallpaper.downloads}</p>
+                    <p>Author: ${wallpaper.author}</p>
+                    <div class="dimension-badge">
+                        <i class="fas fa-ruler-combined"></i> ${wallpaper.resolution}
+                    </div>
+                    <div class="admin-actions" style="margin-top: 15px;">
+                        <button class="admin-btn ${wallpaper.featured ? 'delete-btn' : 'feature-btn'}" 
+                                onclick="toggleFeatured(${wallpaper.id})">
+                            <i class="fas fa-star"></i> ${wallpaper.featured ? 'Remove Featured' : 'Make Featured'}
+                        </button>
+                        <button class="admin-btn delete-btn" onclick="deleteWallpaper(${wallpaper.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function loadUsers() {
+            const container = document.getElementById('usersList');
+            container.innerHTML = '';
+            
+            users.forEach(user => {
+                const item = document.createElement('div');
+                item.className = 'admin-card';
+                item.innerHTML = `
+                    <div class="admin-card-header">
+                        <h3 class="admin-card-title">${user.name}</h3>
+                        <span style="color: ${user.isAdmin ? 'var(--accent)' : 'var(--text-light)'}; font-size: 0.9rem;">
+                            ${user.isAdmin ? 'Admin' : 'User'}
+                        </span>
+                    </div>
+                    <p>Email: ${user.email}</p>
+                    <p>Joined: ${new Date(user.joined).toLocaleDateString()}</p>
+                    <p>Uploads: ${user.uploads || 0} wallpapers</p>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateDashboard() {
+            document.getElementById('pendingCount').textContent = pendingUploads.length;
+            
+            if (pendingUploads.length > 0) {
+                const latest = pendingUploads[pendingUploads.length - 1];
+                document.getElementById('recentActivity').innerHTML = `
+                    Latest upload: <strong>${latest.title}</strong> by ${latest.userName}<br>
+                    Waiting for your review
+                `;
+            }
+        }
+
+        function updatePendingCount() {
+            const countElement = document.getElementById('pendingCount');
+            if (countElement) {
+                countElement.textContent = pendingUploads.length;
+            }
+        }
+
+        function toggleFeatured(id) {
+            const wallpaper = wallpapers.find(w => w.id === id);
+            if (wallpaper) {
+                wallpaper.featured = !wallpaper.featured;
+                loadAllWallpapers();
+                loadWallpapers();
+                
+                showNotification(`Wallpaper ${wallpaper.featured ? 'marked as' : 'removed from'} featured!`, "success");
+            }
+        }
+
+        function deleteWallpaper(id) {
+            if (confirm("Delete this wallpaper permanently?")) {
+                const index = wallpapers.findIndex(w => w.id === id);
+                if (index !== -1) {
+                    wallpapers.splice(index, 1);
+                    loadAllWallpapers();
+                    loadWallpapers();
+                    
+                    showNotification("Wallpaper deleted permanently!", "info");
+                }
+            }
+        }
+
+        // ========== UPLOAD FUNCTIONS ==========
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.match('image.*')) {
+                showNotification("Please select an image file!", "error");
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("File must be less than 5MB!", "error");
+                return;
+            }
+            
+            // Check dimensions (simulated)
+            const img = new Image();
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                img.onload = function() {
+                    const width = img.width;
+                    const height = img.height;
+                    
+                    if (width !== 1080 || height !== 1876) {
+                        showNotification(`Image must be 1080x1876. Current: ${width}x${height}`, "error");
+                        return;
+                    }
+                    
+                    document.getElementById('uploadPreview').src = event.target.result;
+                    document.getElementById('uploadPreview').style.display = 'block';
+                    document.getElementById('uploadForm').style.display = 'block';
+                    
+                    // Store image data
+                    document.getElementById('uploadForm').dataset.imageData = event.target.result;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleUserUpload(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('uploadTitle').value;
+            const category = document.getElementById('uploadCategory').value;
+            const tags = document.getElementById('uploadTags').value;
+            
+            if (!title || !category) {
+                showNotification("Please fill all required fields!", "error");
+                return;
+            }
+            
+            const imageData = document.getElementById('uploadForm').dataset.imageData;
+            if (!imageData) {
+                showNotification("Please select an image first!", "error");
+                return;
+            }
+            
+            // Add to pending uploads
+            const newUpload = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                tags: tags,
+                userName: currentUser.name,
+                userEmail: currentUser.email,
+                imageUrl: imageData,
+                dimensions: "1080x1876",
+                uploadedAt: new Date().toISOString()
+            };
+            
+            pendingUploads.push(newUpload);
+            localStorage.setItem('pendingUploads', JSON.stringify(pendingUploads));
+            
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('uploadForm').style.display = 'none';
+            delete document.getElementById('uploadForm').dataset.imageData;
+            
+            // Close modal
+            elements.uploadModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Update counts
+            updatePendingCount();
+            
+            showNotification("Wallpaper uploaded! Waiting for admin approval.", "success");
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function animateStats() {
+            elements.statsNumbers.forEach(stat => {
+                const target = parseInt(stat.dataset.count);
+                const increment = target / 100;
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = Math.floor(current).toLocaleString() + '+';
+                }, 20);
+            });
+        }
+
+        function showNotification(message, type = "info") {
+            const notification = elements.notification;
+            notification.textContent = message;
+            
+            switch(type) {
+                case 'success':
+                    notification.style.background = 'linear-gradient(90deg, #00b09b, #96c93d)';
+                    break;
+                case 'error':
+                    notification.style.background = 'linear-gradient(90deg, #ff416c, #ff4b2b)';
+                    break;
+                case 'warning':
+                    notification.style.background = 'linear-gradient(90deg, #ffbb33, #ff8800)';
+                    break;
+                default:
+                    notification.style.background = 'linear-gradient(90deg, var(--primary), var(--secondary))';
+            }
+            
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // ========== ADMIN UPLOAD FUNCTIONS ==========
+        document.getElementById('adminUploadArea').addEventListener('click', () => {
+            document.getElementById('adminFileInput').click();
+        });
+
+        document.getElementById('adminFileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('adminUploadPreview').src = event.target.result;
+                    document.getElementById('adminUploadPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('adminUploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('adminTitle').value;
+            const category = document.getElementById('adminCategory').value;
+            const tags = document.getElementById('adminTags').value;
+            const featured = document.getElementById('featuredCheckbox').checked;
+            
+            if (!title) {
+                showNotification("Please enter a title!", "error");
+                return;
+            }
+            
+            // Generate new wallpaper
+            const newWallpaper = {
+                id: wallpapers.length + 1,
+                title: title,
+                category: category,
+                views: 0,
+                downloads: 0,
+                featured: featured,
+                url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1080&h=1876&fit=crop&crop=center",
+                author: "admin",
+                resolution: "1080x1876",
+                size: "1.2MB"
+            };
+            
+            wallpapers.unshift(newWallpaper);
+            
+            // Reset form
+            this.reset();
+            document.getElementById('adminUploadPreview').style.display = 'none';
+            
+            // Update displays
+            loadAllWallpapers();
+            loadWallpapers();
+            
+            showNotification(`Wallpaper "${title}" published successfully!`, "success");
+        });
+
+        // ========== WALLPAPER MODAL CONTROLS ==========
+        document.getElementById('modalDownload').addEventListener('click', downloadWallpaper);
+        document.getElementById('modalSet').addEventListener('click', function() {
+            if (currentWallpaper) {
+                showNotification(`"${currentWallpaper.title}" set as wallpaper!`, "success");
+            }
+        });
+
+        // ========== INITIAL LOAD ==========
+        loadWallpapers();
+    </script>
+</body>
+</html>
