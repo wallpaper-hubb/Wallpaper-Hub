@@ -624,15 +624,165 @@
             background-color: var(--light);
         }
 
-        /* Admin Panel */
-        .admin-badge {
-            background-color: var(--warning);
+        /* Admin Panel Styles */
+        .admin-dashboard {
+            padding: 20px 0;
+        }
+
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .admin-stat-card {
+            background: var(--primary);
             color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: 10px;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .admin-stat-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .admin-stat-card p {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 12px 24px;
+            background: var(--gray-light);
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .admin-tab:hover {
+            background: var(--gray);
+            color: white;
+        }
+
+        .admin-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .uploads-list, .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .upload-item, .user-item {
+            background: var(--gray-light);
+            padding: 20px;
+            border-radius: var(--radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upload-info h4 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .upload-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-approve, .btn-reject {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: white;
+        }
+
+        .user-info h4 {
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .user-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stats-details .stat-item {
+            background: var(--gray-light);
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .stats-details .stat-item h4 {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .stats-details .stat-item p {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Admin Panel Modal */
+        .admin-panel-modal .modal-content {
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         /* Responsive */
@@ -685,6 +835,10 @@
             main {
                 padding-bottom: 150px;
             }
+            
+            .admin-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 576px) {
@@ -708,6 +862,21 @@
             
             .header-actions {
                 gap: 10px;
+            }
+            
+            .admin-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-item, .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .upload-actions {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
@@ -1054,8 +1223,6 @@
                 <i class="fas fa-times"></i>
             </button>
             <h2 class="modal-title">Upload Wallpaper</h2>
-            <p style="text-align: center; margin-bottom: 20px; color: var(--gray);">Please login to upload wallpapers</p>
-            
             <div class="upload-area" id="uploadArea">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>Drag & drop your wallpaper here</p>
@@ -1156,7 +1323,442 @@
         </div>
     </div>
     
+    <!-- Admin Panel Modal -->
+    <div class="modal admin-panel-modal" id="adminPanelModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeAdminPanelModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">Wallhub Admin Panel</h2>
+            
+            <div class="admin-dashboard">
+                <!-- احصائیې -->
+                <div class="admin-stats-grid">
+                    <div class="admin-stat-card">
+                        <h3>Total Uploads</h3>
+                        <p id="totalUploads">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <h3>Pending Approval</h3>
+                        <p id="pendingUploads">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <h3>Total Users</h3>
+                        <p id="totalUsers">0</p>
+                    </div>
+                    <div class="admin-stat-card">
+                        <h3>Recent Users (7 days)</h3>
+                        <p id="recentUsers">0</p>
+                    </div>
+                </div>
+                
+                <!-- ټیبونه -->
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="pending">Pending Approval</button>
+                    <button class="admin-tab" data-tab="approved">Approved</button>
+                    <button class="admin-tab" data-tab="rejected">Rejected</button>
+                    <button class="admin-tab" data-tab="users">Users</button>
+                    <button class="admin-tab" data-tab="stats">Statistics</button>
+                </div>
+                
+                <!-- د تایید په تمه اپلوډونه -->
+                <div class="admin-tab-content active" id="tab-pending">
+                    <div class="uploads-list" id="pendingUploadsList">
+                        <!-- په JavaScript کې ډک شي -->
+                    </div>
+                </div>
+                
+                <!-- تایید شوي اپلوډونه -->
+                <div class="admin-tab-content" id="tab-approved">
+                    <div class="uploads-list" id="approvedUploadsList">
+                        <!-- په JavaScript کې ډک شي -->
+                    </div>
+                </div>
+                
+                <!-- رد شوي اپلوډونه -->
+                <div class="admin-tab-content" id="tab-rejected">
+                    <div class="uploads-list" id="rejectedUploadsList">
+                        <!-- په JavaScript کې ډک شي -->
+                    </div>
+                </div>
+                
+                <!-- کارنان -->
+                <div class="admin-tab-content" id="tab-users">
+                    <div class="users-list" id="usersList">
+                        <!-- په JavaScript کې ډک شي -->
+                    </div>
+                </div>
+                
+                <!-- احصائیې -->
+                <div class="admin-tab-content" id="tab-stats">
+                    <div class="stats-details">
+                        <h3>Site Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <h4>Total Downloads</h4>
+                                <p id="statsTotalDownloads">0</p>
+                            </div>
+                            <div class="stat-item">
+                                <h4>Total Wallpapers</h4>
+                                <p id="statsTotalWallpapers">0</p>
+                            </div>
+                            <div class="stat-item">
+                                <h4>Monthly Growth</h4>
+                                <p id="statsMonthlyGrowth">0%</p>
+                            </div>
+                            <div class="stat-item">
+                                <h4>Daily Visitors</h4>
+                                <p id="statsDailyVisitors">0</p>
+                            </div>
+                        </div>
+                        <canvas id="statsChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
+        // د بیک اینډ سیټ اپ (د محلي اسټوریج کارول)
+        class BackendSimulator {
+            constructor() {
+                this.users = JSON.parse(localStorage.getItem('wallhub_users')) || [];
+                this.wallpapers = JSON.parse(localStorage.getItem('wallhub_wallpapers')) || this.getDefaultWallpapers();
+                this.uploads = JSON.parse(localStorage.getItem('wallhub_uploads')) || [];
+                this.siteStats = JSON.parse(localStorage.getItem('wallhub_stats')) || this.getDefaultStats();
+                this.likedWallpapers = JSON.parse(localStorage.getItem('wallhub_likes')) || [];
+                
+                // ډیفالټ اډمین اضافه کول
+                this.initializeAdmin();
+            }
+            
+            getDefaultWallpapers() {
+                return [
+                    {
+                        id: '1',
+                        title: 'Mountain Sunset',
+                        category: 'Nature',
+                        tags: ['mountain', 'sunset', 'landscape'],
+                        resolution: '8K',
+                        imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
+                        downloads: 12450,
+                        likes: 890,
+                        uploader: 'Admin',
+                        uploaderId: 'admin-001',
+                        uploadDate: '2024-01-15',
+                        featured: true
+                    },
+                    {
+                        id: '2',
+                        title: 'Ocean Waves',
+                        category: 'Nature',
+                        tags: ['ocean', 'waves', 'water'],
+                        resolution: '4K',
+                        imageUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
+                        downloads: 9870,
+                        likes: 765,
+                        uploader: 'Admin',
+                        uploaderId: 'admin-001',
+                        uploadDate: '2024-01-14',
+                        featured: false
+                    },
+                    {
+                        id: '3',
+                        title: 'Northern Lights',
+                        category: 'Space',
+                        tags: ['aurora', 'night', 'sky'],
+                        resolution: '5K',
+                        imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
+                        downloads: 15230,
+                        likes: 1120,
+                        uploader: 'Admin',
+                        uploaderId: 'admin-001',
+                        uploadDate: '2024-01-13',
+                        featured: true
+                    }
+                ];
+            }
+            
+            getDefaultStats() {
+                return {
+                    totalDownloads: 1250000,
+                    totalUsers: 65000,
+                    totalWallpapers: 5300000,
+                    totalCategories: 60,
+                    dailyVisitors: 2450,
+                    monthlyGrowth: 15.5,
+                    pendingUploads: 0,
+                    approvedUploads: 0,
+                    rejectedUploads: 0
+                };
+            }
+            
+            initializeAdmin() {
+                const adminExists = this.users.find(u => u.email === 'badsha.bilal.546@gmail.com');
+                
+                if (!adminExists) {
+                    const adminUser = {
+                        id: 'admin-001',
+                        name: 'Admin Bilal',
+                        email: 'badsha.bilal.546@gmail.com',
+                        password: 'Bilal546###', // په حقیقي حالت کې هیش کړئ
+                        isAdmin: true,
+                        joinDate: new Date().toISOString(),
+                        totalDownloads: 0,
+                        totalUploads: 0,
+                        likedWallpapers: []
+                    };
+                    
+                    this.users.push(adminUser);
+                    this.saveData();
+                }
+            }
+            
+            saveData() {
+                localStorage.setItem('wallhub_users', JSON.stringify(this.users));
+                localStorage.setItem('wallhub_wallpapers', JSON.stringify(this.wallpapers));
+                localStorage.setItem('wallhub_uploads', JSON.stringify(this.uploads));
+                localStorage.setItem('wallhub_stats', JSON.stringify(this.siteStats));
+                localStorage.setItem('wallhub_likes', JSON.stringify(this.likedWallpapers));
+            }
+            
+            // د کارن API
+            register(userData) {
+                const existingUser = this.users.find(u => u.email === userData.email);
+                if (existingUser) {
+                    return { success: false, error: 'Email already exists' };
+                }
+                
+                const newUser = {
+                    id: 'user-' + Date.now(),
+                    ...userData,
+                    isAdmin: userData.email === 'badsha.bilal.546@gmail.com',
+                    joinDate: new Date().toISOString(),
+                    totalDownloads: 0,
+                    totalUploads: 0,
+                    likedWallpapers: []
+                };
+                
+                this.users.push(newUser);
+                this.siteStats.totalUsers++;
+                this.saveData();
+                
+                return { 
+                    success: true, 
+                    user: {
+                        id: newUser.id,
+                        name: newUser.name,
+                        email: newUser.email,
+                        isAdmin: newUser.isAdmin
+                    }
+                };
+            }
+            
+            login(email, password) {
+                const user = this.users.find(u => u.email === email);
+                
+                if (!user) {
+                    return { success: false, error: 'Invalid email or password' };
+                }
+                
+                if (user.password !== password) {
+                    return { success: false, error: 'Invalid email or password' };
+                }
+                
+                return { 
+                    success: true, 
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        isAdmin: user.isAdmin
+                    }
+                };
+            }
+            
+            // د اپلوډ API
+            uploadWallpaper(uploadData) {
+                const newUpload = {
+                    id: 'upload-' + Date.now(),
+                    ...uploadData,
+                    status: 'pending',
+                    uploadDate: new Date().toISOString(),
+                    adminNote: ''
+                };
+                
+                this.uploads.push(newUpload);
+                this.siteStats.pendingUploads++;
+                
+                // د کارن اپلوډ شمیر زیاتول
+                const user = this.users.find(u => u.id === uploadData.userId);
+                if (user) {
+                    user.totalUploads++;
+                }
+                
+                this.saveData();
+                
+                return { 
+                    success: true, 
+                    message: 'Upload submitted for admin approval',
+                    upload: newUpload
+                };
+            }
+            
+            // د اډمین API
+            getAdminStats() {
+                const today = new Date().toISOString().split('T')[0];
+                const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const recentUsers = this.users.filter(u => 
+                    u.joinDate.split('T')[0] >= weekAgo
+                ).length;
+                
+                const recentUploads = this.uploads.filter(u => 
+                    u.uploadDate.split('T')[0] >= weekAgo
+                ).length;
+                
+                return {
+                    ...this.siteStats,
+                    recentUsers,
+                    recentUploads,
+                    pendingUploads: this.uploads.filter(u => u.status === 'pending').length,
+                    approvedUploads: this.uploads.filter(u => u.status === 'approved').length,
+                    rejectedUploads: this.uploads.filter(u => u.status === 'rejected').length,
+                    totalUsers: this.users.length,
+                    users: this.users.map(user => ({
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        joinDate: user.joinDate,
+                        totalUploads: user.totalUploads,
+                        totalDownloads: user.totalDownloads,
+                        isAdmin: user.isAdmin
+                    }))
+                };
+            }
+            
+            getUploadsByStatus(status) {
+                return this.uploads.filter(u => u.status === status);
+            }
+            
+            updateUploadStatus(uploadId, status, note = '') {
+                const uploadIndex = this.uploads.findIndex(u => u.id === uploadId);
+                
+                if (uploadIndex === -1) {
+                    return { success: false, error: 'Upload not found' };
+                }
+                
+                const oldStatus = this.uploads[uploadIndex].status;
+                
+                // د احصائیې شمیر تازه کول
+                if (oldStatus === 'pending') this.siteStats.pendingUploads--;
+                if (oldStatus === 'approved') this.siteStats.approvedUploads--;
+                if (oldStatus === 'rejected') this.siteStats.rejectedUploads--;
+                
+                this.uploads[uploadIndex].status = status;
+                this.uploads[uploadIndex].adminNote = note;
+                this.uploads[uploadIndex].reviewDate = new Date().toISOString();
+                
+                if (status === 'pending') this.siteStats.pendingUploads++;
+                if (status === 'approved') this.siteStats.approvedUploads++;
+                if (status === 'rejected') this.siteStats.rejectedUploads++;
+                
+                // که تایید شي، د wallpaper لیست ته اضافه کړئ
+                if (status === 'approved') {
+                    const approvedUpload = this.uploads[uploadIndex];
+                    const newWallpaper = {
+                        id: approvedUpload.id,
+                        title: approvedUpload.title,
+                        category: approvedUpload.category,
+                        tags: approvedUpload.tags,
+                        resolution: approvedUpload.resolution,
+                        imageUrl: approvedUpload.filePath || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
+                        downloads: 0,
+                        likes: 0,
+                        uploader: approvedUpload.userName,
+                        uploaderId: approvedUpload.userId,
+                        uploadDate: approvedUpload.uploadDate,
+                        featured: this.wallpapers.length % 10 === 0
+                    };
+                    
+                    this.wallpapers.push(newWallpaper);
+                    this.siteStats.totalWallpapers++;
+                }
+                
+                this.saveData();
+                
+                return { 
+                    success: true, 
+                    message: `Upload ${status}`,
+                    upload: this.uploads[uploadIndex]
+                };
+            }
+            
+            // د wallpaper API
+            downloadWallpaper(wallpaperId, userId) {
+                const wallpaper = this.wallpapers.find(w => w.id === wallpaperId);
+                
+                if (!wallpaper) {
+                    return { success: false, error: 'Wallpaper not found' };
+                }
+                
+                wallpaper.downloads++;
+                this.siteStats.totalDownloads++;
+                
+                // د کارن ډاونلوډ شمیر زیاتول
+                const user = this.users.find(u => u.id === userId);
+                if (user) {
+                    user.totalDownloads++;
+                }
+                
+                this.saveData();
+                
+                return { 
+                    success: true, 
+                    message: 'Download started',
+                    wallpaper
+                };
+            }
+            
+            likeWallpaper(wallpaperId, userId) {
+                const wallpaper = this.wallpapers.find(w => w.id === wallpaperId);
+                const user = this.users.find(u => u.id === userId);
+                
+                if (!wallpaper || !user) {
+                    return { success: false, error: 'Not found' };
+                }
+                
+                const likedIndex = user.likedWallpapers.indexOf(wallpaperId);
+                
+                if (likedIndex === -1) {
+                    // لایک اضافه کول
+                    wallpaper.likes++;
+                    user.likedWallpapers.push(wallpaperId);
+                    this.likedWallpapers.push(wallpaperId);
+                } else {
+                    // لایک لیرې کول
+                    wallpaper.likes--;
+                    user.likedWallpapers.splice(likedIndex, 1);
+                    this.likedWallpapers = this.likedWallpapers.filter(id => id !== wallpaperId);
+                }
+                
+                this.saveData();
+                
+                return { 
+                    success: true, 
+                    likes: wallpaper.likes,
+                    isLiked: likedIndex === -1
+                };
+            }
+            
+            isWallpaperLiked(wallpaperId) {
+                return this.likedWallpapers.includes(wallpaperId);
+            }
+        }
+
+        // د بیک اینډ انسټانس
+        const backend = new BackendSimulator();
+
         // DOM Elements
         const themeToggle = document.getElementById('themeToggle');
         const uploadBtn = document.getElementById('uploadBtn');
@@ -1166,11 +1768,13 @@
         const uploadModal = document.getElementById('uploadModal');
         const previewModal = document.getElementById('previewModal');
         const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminPanelModal = document.getElementById('adminPanelModal');
         const closeLoginModal = document.getElementById('closeLoginModal');
         const closeRegisterModal = document.getElementById('closeRegisterModal');
         const closeUploadModal = document.getElementById('closeUploadModal');
         const closePreviewModal = document.getElementById('closePreviewModal');
         const closeAdminModal = document.getElementById('closeAdminModal');
+        const closeAdminPanelModal = document.getElementById('closeAdminPanelModal');
         const showRegister = document.getElementById('showRegister');
         const showLogin = document.getElementById('showLogin');
         const loginForm = document.getElementById('loginForm');
@@ -1188,18 +1792,333 @@
         const previewDownloadBtn = document.getElementById('previewDownloadBtn');
         const previewLikeBtn = document.getElementById('previewLikeBtn');
         
-        // Admin credentials (in a real app, these would be stored securely on the server)
-        const ADMIN_EMAIL = "badsha.bilal.546@gmail.com";
-        const ADMIN_PASSWORD = "Bilal546###";
+        // د اډمین پینل عناصر
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const adminTabContents = document.querySelectorAll('.admin-tab-content');
         
         // Current user state
-        let currentUser = null;
-        let isAdmin = false;
-        let darkMode = false;
-        let likedWallpapers = [];
+        let currentUser = JSON.parse(localStorage.getItem('wallhub_current_user')) || null;
+        let isAdmin = currentUser ? currentUser.isAdmin : false;
+        let darkMode = localStorage.getItem('wallhub-dark-mode') === 'true';
         let currentPreviewId = null;
         
+        // د اډمین پینل کلاس
+        class AdminPanel {
+            constructor() {
+                this.currentTab = 'pending';
+                this.init();
+            }
+            
+            async init() {
+                this.setupEventListeners();
+                await this.loadAdminData();
+            }
+            
+            setupEventListeners() {
+                // د ټیبونو ایونټونه
+                adminTabs.forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabName = e.target.dataset.tab;
+                        this.switchTab(tabName);
+                    });
+                });
+            }
+            
+            switchTab(tabName) {
+                // د فعال ټیب تازه کول
+                adminTabs.forEach(tab => {
+                    tab.classList.remove('active');
+                    if (tab.dataset.tab === tabName) {
+                        tab.classList.add('active');
+                    }
+                });
+                
+                // د ټیب محتوا تازه کول
+                adminTabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `tab-${tabName}`) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                this.currentTab = tabName;
+                
+                // د ټیب ډیټا ډکول
+                switch(tabName) {
+                    case 'pending':
+                        this.loadPendingUploads();
+                        break;
+                    case 'approved':
+                        this.loadApprovedUploads();
+                        break;
+                    case 'rejected':
+                        this.loadRejectedUploads();
+                        break;
+                    case 'users':
+                        this.loadUsers();
+                        break;
+                    case 'stats':
+                        this.loadStats();
+                        break;
+                }
+            }
+            
+            async loadAdminData() {
+                try {
+                    const stats = backend.getAdminStats();
+                    this.updateStats(stats);
+                    
+                } catch (error) {
+                    console.error('د اډمین ډیټا تیروتنه:', error);
+                    alert('د اډمین پینل لاسرسی تیروتنه');
+                }
+            }
+            
+            updateStats(data) {
+                // احصائیې تازه کول
+                document.getElementById('totalUploads').textContent = data.pendingUploads + data.approvedUploads + data.rejectedUploads || 0;
+                document.getElementById('pendingUploads').textContent = data.pendingUploads || 0;
+                document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                document.getElementById('recentUsers').textContent = data.recentUsers || 0;
+                
+                // د تفصيلي احصائیې تازه کول
+                document.getElementById('statsTotalDownloads').textContent = 
+                    data.totalDownloads ? data.totalDownloads.toLocaleString() : '0';
+                document.getElementById('statsTotalWallpapers').textContent = 
+                    data.totalWallpapers ? data.totalWallpapers.toLocaleString() : '0';
+                document.getElementById('statsMonthlyGrowth').textContent = 
+                    data.monthlyGrowth ? `${data.monthlyGrowth}%` : '0%';
+                document.getElementById('statsDailyVisitors').textContent = 
+                    data.dailyVisitors ? data.dailyVisitors.toLocaleString() : '0';
+                
+                // د لومړي ټیب ډیټا ډکول
+                this.loadPendingUploads();
+            }
+            
+            loadPendingUploads() {
+                try {
+                    const pendingUploads = backend.getUploadsByStatus('pending');
+                    this.renderUploadsList(pendingUploads, 'pendingUploadsList', true);
+                    
+                } catch (error) {
+                    console.error('د اپلوډونو تیروتنه:', error);
+                    document.getElementById('pendingUploadsList').innerHTML = 
+                        `<p style="text-align: center; color: var(--gray);">د اپلوډونو لیست ترلاسه نشو</p>`;
+                }
+            }
+            
+            loadApprovedUploads() {
+                try {
+                    const approvedUploads = backend.getUploadsByStatus('approved');
+                    this.renderUploadsList(approvedUploads, 'approvedUploadsList', false);
+                    
+                } catch (error) {
+                    console.error('تیروتنه:', error);
+                }
+            }
+            
+            loadRejectedUploads() {
+                try {
+                    const rejectedUploads = backend.getUploadsByStatus('rejected');
+                    this.renderUploadsList(rejectedUploads, 'rejectedUploadsList', false);
+                    
+                } catch (error) {
+                    console.error('تیروتنه:', error);
+                }
+            }
+            
+            loadUsers() {
+                try {
+                    const stats = backend.getAdminStats();
+                    this.renderUsersList(stats.users || []);
+                    
+                } catch (error) {
+                    console.error('د کارنانو تیروتنه:', error);
+                }
+            }
+            
+            loadStats() {
+                // د ګراف لپاره
+                const ctx = document.getElementById('statsChart').getContext('2d');
+                // په ساده ډول یو ګراف ښودل
+                this.drawSimpleChart(ctx);
+            }
+            
+            drawSimpleChart(ctx) {
+                // د ساده ګراف لپاره
+                ctx.clearRect(0, 0, 400, 200);
+                
+                // د ایکس محور
+                ctx.beginPath();
+                ctx.moveTo(30, 180);
+                ctx.lineTo(380, 180);
+                ctx.strokeStyle = var(--gray);
+                ctx.stroke();
+                
+                // د وای محور
+                ctx.beginPath();
+                ctx.moveTo(30, 20);
+                ctx.lineTo(30, 180);
+                ctx.strokeStyle = var(--gray);
+                ctx.stroke();
+                
+                // د ډیټا نقطې
+                const data = [65, 59, 80, 81, 56, 55, 40];
+                const colors = ['#4361ee', '#7209b7', '#4cc9f0', '#f72585', '#ff9e00', '#3a56d4', '#ff6b6b'];
+                
+                ctx.fillStyle = var(--primary);
+                ctx.font = '12px Arial';
+                ctx.fillText('Weekly Stats', 150, 30);
+                
+                for (let i = 0; i < data.length; i++) {
+                    const x = 50 + i * 50;
+                    const height = data[i] * 2;
+                    const y = 180 - height;
+                    
+                    ctx.fillStyle = colors[i % colors.length];
+                    ctx.fillRect(x, y, 30, height);
+                    
+                    ctx.fillStyle = var(--dark);
+                    ctx.fillText(data[i], x + 5, y - 5);
+                }
+            }
+            
+            renderUploadsList(uploads, containerId, showActions = true) {
+                const container = document.getElementById(containerId);
+                
+                if (!uploads || uploads.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: var(--gray);">No uploads found</p>`;
+                    return;
+                }
+                
+                let html = '';
+                
+                uploads.forEach(upload => {
+                    const fileSizeMB = upload.fileSize ? (upload.fileSize / (1024 * 1024)).toFixed(2) + ' MB' : 'Unknown';
+                    const uploadDate = new Date(upload.uploadDate).toLocaleDateString();
+                    
+                    html += `
+                    <div class="upload-item" data-id="${upload.id}">
+                        <div class="upload-info">
+                            <h4>${upload.title}</h4>
+                            <div class="upload-meta">
+                                <span><i class="fas fa-user"></i> ${upload.userName}</span>
+                                <span><i class="fas fa-folder"></i> ${upload.category}</span>
+                                <span><i class="fas fa-expand"></i> ${upload.resolution}</span>
+                                <span><i class="fas fa-calendar"></i> ${uploadDate}</span>
+                                <span><i class="fas fa-file"></i> ${fileSizeMB}</span>
+                            </div>
+                            ${upload.adminNote ? `<p><strong>Admin Note:</strong> ${upload.adminNote}</p>` : ''}
+                        </div>
+                        ${showActions ? `
+                        <div class="upload-actions">
+                            <button class="btn-approve" onclick="adminPanel.approveUpload('${upload.id}')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn-reject" onclick="adminPanel.rejectUpload('${upload.id}')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+            
+            renderUsersList(users) {
+                const container = document.getElementById('usersList');
+                
+                if (!users || users.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: var(--gray);">No users found</p>`;
+                    return;
+                }
+                
+                let html = '';
+                
+                users.forEach(user => {
+                    const joinDate = new Date(user.joinDate).toLocaleDateString();
+                    
+                    html += `
+                    <div class="user-item">
+                        <div class="user-info">
+                            <h4>${user.name} ${user.isAdmin ? '<span class="admin-badge">Admin</span>' : ''}</h4>
+                            <div class="user-meta">
+                                <span><i class="fas fa-envelope"></i> ${user.email}</span>
+                                <span><i class="fas fa-calendar"></i> ${joinDate}</span>
+                                <span><i class="fas fa-upload"></i> ${user.totalUploads} uploads</span>
+                                <span><i class="fas fa-download"></i> ${user.totalDownloads} downloads</span>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            }
+            
+            async approveUpload(uploadId) {
+                if (!confirm('Are you sure you want to approve this upload?')) {
+                    return;
+                }
+                
+                try {
+                    const result = backend.updateUploadStatus(uploadId, 'approved', 'Approved by admin');
+                    
+                    if (!result.success) {
+                        throw new Error(result.error);
+                    }
+                    
+                    alert('Upload approved successfully!');
+                    this.loadPendingUploads();
+                    this.loadAdminData(); // احصائیې تازه کول
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Approval failed');
+                }
+            }
+            
+            async rejectUpload(uploadId) {
+                const note = prompt('Enter rejection reason:');
+                if (note === null) return;
+                
+                try {
+                    const result = backend.updateUploadStatus(uploadId, 'rejected', note || 'Quality issue');
+                    
+                    if (!result.success) {
+                        throw new Error(result.error);
+                    }
+                    
+                    alert('Upload rejected!');
+                    this.loadPendingUploads();
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Rejection failed');
+                }
+            }
+        }
+
+        // د اډمین پینل انسټانس
+        let adminPanel = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
+            updateUserInterface();
+            updateLikeButtons();
+        });
+
         // Theme Toggle
+        function initializeTheme() {
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+        }
+
         themeToggle.addEventListener('click', () => {
             darkMode = !darkMode;
             document.body.classList.toggle('dark-mode', darkMode);
@@ -1208,30 +2127,52 @@
             // Save theme preference
             localStorage.setItem('wallhub-dark-mode', darkMode);
         });
-        
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('wallhub-dark-mode');
-        if (savedTheme === 'true') {
-            darkMode = true;
-            document.body.classList.add('dark-mode');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-        
-        // User Menu Button
-        userMenuBtn.addEventListener('click', () => {
+
+        // Update User Interface based on login state
+        function updateUserInterface() {
             if (currentUser) {
-                // Show user dropdown (simplified for this example)
                 if (isAdmin) {
-                    alert(`Logged in as Admin: ${currentUser}\n\nAdmin Panel Features:\n- Approve/reject uploaded wallpapers\n- Manage users\n- View analytics\n- Manage categories`);
+                    userMenuBtn.innerHTML = `<i class="fas fa-user-shield"></i>`;
+                    userMenuBtn.title = "Admin Account";
                 } else {
-                    alert(`Logged in as: ${currentUser}\n\nUser Features:\n- Upload wallpapers\n- Like/favorite wallpapers\n- View download history\n- Edit profile`);
+                    userMenuBtn.innerHTML = `<i class="fas fa-user"></i>`;
+                    userMenuBtn.title = "User Account";
                 }
             } else {
-                // Show login modal
+                userMenuBtn.innerHTML = `<i class="fas fa-user"></i>`;
+                userMenuBtn.title = "Login / Register";
+            }
+        }
+
+        // Update Like Buttons based on saved likes
+        function updateLikeButtons() {
+            likeButtons.forEach(button => {
+                const wallpaperId = button.getAttribute('data-id');
+                if (backend.isWallpaperLiked(wallpaperId)) {
+                    button.classList.add('liked');
+                    button.innerHTML = '<i class="fas fa-heart"></i>';
+                }
+            });
+        }
+
+        // User Menu Button
+        userMenuBtn.addEventListener('click', () => {
+            if (currentUser && isAdmin) {
+                // د اډمین پینل ښودل
+                if (!adminPanel) {
+                    adminPanel = new AdminPanel();
+                }
+                adminPanelModal.classList.add('active');
+                adminPanel.loadAdminData();
+            } else if (currentUser) {
+                // د معمول کارن مینو
+                alert(`Logged in as: ${currentUser.name}\n\nUser Features:\n- Upload wallpapers\n- Like/favorite wallpapers\n- View download history\n- Edit profile`);
+            } else {
+                // د ننوتلو مودال
                 loginModal.classList.add('active');
             }
         });
-        
+
         // Upload Button
         uploadBtn.addEventListener('click', () => {
             if (currentUser) {
@@ -1240,52 +2181,52 @@
                 loginModal.classList.add('active');
             }
         });
-        
+
         // Close Modals
         closeLoginModal.addEventListener('click', () => loginModal.classList.remove('active'));
         closeRegisterModal.addEventListener('click', () => registerModal.classList.remove('active'));
         closeUploadModal.addEventListener('click', () => uploadModal.classList.remove('active'));
         closePreviewModal.addEventListener('click', () => previewModal.classList.remove('active'));
         closeAdminModal.addEventListener('click', () => adminLoginModal.classList.remove('active'));
-        
+        closeAdminPanelModal.addEventListener('click', () => adminPanelModal.classList.remove('active'));
+
         // Switch between login and register modals
         showRegister.addEventListener('click', (e) => {
             e.preventDefault();
             loginModal.classList.remove('active');
             registerModal.classList.add('active');
         });
-        
+
         showLogin.addEventListener('click', (e) => {
             e.preventDefault();
             registerModal.classList.remove('active');
             loginModal.classList.add('active');
         });
-        
+
         // Login Form Submission
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
-            // Check if admin login
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                currentUser = "Admin User";
-                isAdmin = true;
+            const result = backend.login(email, password);
+            
+            if (result.success) {
+                currentUser = result.user;
+                isAdmin = result.user.isAdmin;
+                
+                // Save user to localStorage
+                localStorage.setItem('wallhub_current_user', JSON.stringify(currentUser));
+                
                 loginModal.classList.remove('active');
-                userMenuBtn.innerHTML = `<i class="fas fa-user-shield"></i>`;
-                userMenuBtn.title = "Admin Account";
-                alert("Admin login successful! You can now access the admin panel.");
+                updateUserInterface();
+                
+                alert(`Login successful! Welcome ${currentUser.name}.`);
             } else {
-                // Regular user login (simulated)
-                currentUser = email.split('@')[0];
-                isAdmin = false;
-                loginModal.classList.remove('active');
-                userMenuBtn.innerHTML = `<i class="fas fa-user"></i>`;
-                userMenuBtn.title = "User Account";
-                alert(`Login successful! Welcome ${currentUser}.`);
+                alert(result.error);
             }
         });
-        
+
         // Register Form Submission
         registerForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1299,85 +2240,132 @@
                 return;
             }
             
-            // Simulate registration
-            currentUser = name;
-            isAdmin = false;
-            registerModal.classList.remove('active');
-            userMenuBtn.innerHTML = `<i class="fas fa-user"></i>`;
-            userMenuBtn.title = "User Account";
-            alert(`Registration successful! Welcome to Wallhub, ${name}.`);
+            const result = backend.register({
+                name,
+                email,
+                password
+            });
+            
+            if (result.success) {
+                currentUser = result.user;
+                isAdmin = result.user.isAdmin;
+                
+                // Save user to localStorage
+                localStorage.setItem('wallhub_current_user', JSON.stringify(currentUser));
+                
+                registerModal.classList.remove('active');
+                updateUserInterface();
+                
+                alert(`Registration successful! Welcome to Wallhub, ${name}.`);
+            } else {
+                alert(result.error);
+            }
         });
-        
+
         // Admin Login Form Submission
         adminLoginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const email = document.getElementById('adminEmail').value;
             const password = document.getElementById('adminPassword').value;
             
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                currentUser = "Admin User";
+            const result = backend.login(email, password);
+            
+            if (result.success && result.user.isAdmin) {
+                currentUser = result.user;
                 isAdmin = true;
+                
+                // Save user to localStorage
+                localStorage.setItem('wallhub_current_user', JSON.stringify(currentUser));
+                
                 adminLoginModal.classList.remove('active');
-                userMenuBtn.innerHTML = `<i class="fas fa-user-shield"></i>`;
-                userMenuBtn.title = "Admin Account";
+                updateUserInterface();
+                
                 alert("Admin login successful! You can now access the admin panel.");
             } else {
                 alert("Invalid admin credentials!");
             }
         });
-        
+
         // Upload Area Click
         uploadArea.addEventListener('click', () => {
-            // In a real app, this would trigger a file input dialog
-            // For this demo, we'll simulate a file selection
+            // Simulate file selection
             fileInfo.classList.add('active');
             document.getElementById('fileName').textContent = 'wallpaper-upload.jpg';
             document.getElementById('fileSize').textContent = '2.4 MB';
             uploadSubmitBtn.disabled = false;
         });
-        
+
         // Upload Form Submission
         uploadForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const title = document.getElementById('wallpaperTitle').value;
-            const category = document.getElementById('wallpaperCategory').value;
             
             if (!currentUser) {
                 alert("Please login to upload wallpapers.");
                 return;
             }
             
-            // Simulate upload with admin approval
-            uploadModal.classList.remove('active');
-            alert(`"${title}" uploaded successfully!\n\nYour wallpaper has been submitted for admin approval. It will appear on the site once approved.`);
+            const title = document.getElementById('wallpaperTitle').value;
+            const category = document.getElementById('wallpaperCategory').value;
+            const tags = document.getElementById('wallpaperTags').value;
+            const resolution = document.querySelector('input[name="resolution"]:checked').value;
             
-            // Reset form
-            uploadForm.reset();
-            fileInfo.classList.remove('active');
-            uploadSubmitBtn.disabled = true;
+            const uploadData = {
+                userId: currentUser.id,
+                userName: currentUser.name,
+                title,
+                category,
+                tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+                resolution,
+                filePath: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80',
+                fileSize: 2500000
+            };
+            
+            const result = backend.uploadWallpaper(uploadData);
+            
+            if (result.success) {
+                uploadModal.classList.remove('active');
+                alert(`"${title}" uploaded successfully!\n\nYour wallpaper has been submitted for admin approval. It will appear on the site once approved.`);
+                
+                // Reset form
+                uploadForm.reset();
+                fileInfo.classList.remove('active');
+                uploadSubmitBtn.disabled = true;
+            } else {
+                alert("Upload failed: " + result.error);
+            }
         });
-        
+
         // Download Buttons
         downloadButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const wallpaperId = this.getAttribute('data-id');
                 
-                // In a real app, this would initiate a download
-                // For this demo, we'll show an alert and increment the counter
-                const downloadCountElement = this.closest('.wallpaper-card').querySelector('.wallpaper-downloads span');
-                let currentCount = parseInt(downloadCountElement.textContent.replace(/,/g, ''));
-                currentCount++;
-                downloadCountElement.textContent = currentCount.toLocaleString();
+                if (!currentUser) {
+                    alert("Please login to download wallpapers.");
+                    return;
+                }
                 
-                alert(`Wallpaper #${wallpaperId} download started!`);
+                const result = backend.downloadWallpaper(wallpaperId, currentUser.id);
                 
-                // Simulate download counter update
-                setTimeout(() => {
-                    alert(`Wallpaper #${wallpaperId} downloaded successfully!`);
-                }, 1000);
+                if (result.success) {
+                    // Update download count in UI
+                    const downloadCountElement = this.closest('.wallpaper-card').querySelector('.wallpaper-downloads span');
+                    let currentCount = parseInt(downloadCountElement.textContent.replace(/,/g, ''));
+                    currentCount++;
+                    downloadCountElement.textContent = currentCount.toLocaleString();
+                    
+                    alert(`Wallpaper #${wallpaperId} download started!`);
+                    
+                    // Simulate download
+                    setTimeout(() => {
+                        alert(`Wallpaper #${wallpaperId} downloaded successfully!`);
+                    }, 1000);
+                } else {
+                    alert("Download failed: " + result.error);
+                }
             });
         });
-        
+
         // Like Buttons
         likeButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -1388,20 +2376,22 @@
                     return;
                 }
                 
-                const isLiked = this.classList.contains('liked');
+                const result = backend.likeWallpaper(wallpaperId, currentUser.id);
                 
-                if (isLiked) {
-                    this.classList.remove('liked');
-                    this.innerHTML = '<i class="far fa-heart"></i>';
-                    likedWallpapers = likedWallpapers.filter(id => id !== wallpaperId);
+                if (result.success) {
+                    if (result.isLiked) {
+                        this.classList.add('liked');
+                        this.innerHTML = '<i class="fas fa-heart"></i>';
+                    } else {
+                        this.classList.remove('liked');
+                        this.innerHTML = '<i class="far fa-heart"></i>';
+                    }
                 } else {
-                    this.classList.add('liked');
-                    this.innerHTML = '<i class="fas fa-heart"></i>';
-                    likedWallpapers.push(wallpaperId);
+                    alert("Like action failed: " + result.error);
                 }
             });
         });
-        
+
         // Preview Buttons
         previewButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -1415,14 +2405,14 @@
                 previewImage.alt = wallpaperTitle;
                 
                 // Set the like button state
-                const isLiked = likedWallpapers.includes(wallpaperId);
+                const isLiked = backend.isWallpaperLiked(wallpaperId);
                 previewLikeBtn.innerHTML = isLiked ? '<i class="fas fa-heart"></i> Unlike' : '<i class="far fa-heart"></i> Like';
                 previewLikeBtn.classList.toggle('liked', isLiked);
                 
                 previewModal.classList.add('active');
             });
         });
-        
+
         // Preview Download Button
         previewDownloadBtn.addEventListener('click', () => {
             if (currentPreviewId) {
@@ -1434,7 +2424,7 @@
                 previewModal.classList.remove('active');
             }
         });
-        
+
         // Preview Like Button
         previewLikeBtn.addEventListener('click', () => {
             if (!currentUser) {
@@ -1455,7 +2445,7 @@
                 }
             }
         });
-        
+
         // Category Filtering
         categoryItems.forEach(item => {
             item.addEventListener('click', function() {
@@ -1469,7 +2459,7 @@
                 alert(`Showing wallpapers in category: ${categoryName}`);
             });
         });
-        
+
         // Search Functionality
         const searchBar = document.querySelector('.search-bar');
         const searchBtn = document.querySelector('.search-btn');
@@ -1490,30 +2480,31 @@
                 alert(`Searching for: "${query}"\n\nIn a real application, this would show search results.`);
             }
         }
-        
+
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 e.target.classList.remove('active');
             }
         });
-        
+
         // Admin access shortcut (for demo purposes)
         // Double-click the logo to access admin login
         document.querySelector('.logo').addEventListener('dblclick', () => {
-            adminLoginModal.classList.add('active');
-        });
-        
-        // Initialize with some liked wallpapers for demo
-        likedWallpapers = ['1', '3'];
-        likedWallpapers.forEach(id => {
-            const likeBtn = document.querySelector(`.btn-like[data-id="${id}"]`);
-            if (likeBtn) {
-                likeBtn.classList.add('liked');
-                likeBtn.innerHTML = '<i class="fas fa-heart"></i>';
+            if (!currentUser || !isAdmin) {
+                adminLoginModal.classList.add('active');
+            } else {
+                if (!adminPanel) {
+                    adminPanel = new AdminPanel();
+                }
+                adminPanelModal.classList.add('active');
+                adminPanel.loadAdminData();
             }
         });
-        
+
+        // Initialize with some liked wallpapers for demo
+        // This is already handled by the backend class
+
         // Show welcome message
         setTimeout(() => {
             console.log("Wallhub Website Loaded Successfully!");
@@ -1531,6 +2522,14 @@
             console.log("- User Registration & Login");
             console.log("- User Wallpaper Upload with Admin Approval");
             console.log("- Admin Panel (Access by double-clicking logo)");
+            console.log("- Full Backend Simulation with Local Storage");
+            console.log("\nAdmin Credentials:");
+            console.log("Email: badsha.bilal.546@gmail.com");
+            console.log("Password: Bilal546###");
+            console.log("\nHow to use Admin Panel:");
+            console.log("1. Double-click the logo");
+            console.log("2. Login with admin credentials");
+            console.log("3. Access admin panel from user menu");
         }, 1000);
     </script>
 </body>
